@@ -1,7 +1,6 @@
 require('isomorphic-fetch');
 
 import {
-	createDeleteFetch,
 	createFetch,
 	HTTP_GET_METHOD,
 	HTTP_PATCH_METHOD,
@@ -61,8 +60,12 @@ const URL = '/employees';
  **/
 export const getEmployees = (page = 0) => (dispatch) => {
 	dispatch(requestEmployees());
+	const params = {
+		page,
+		size: PAGE_SIZE
+	}
 	return createFetch(URL, HTTP_GET_METHOD, receiveEmployees,
-		GET_EMPLOYEES_FAIL, dispatch);
+		GET_EMPLOYEES_FAIL, dispatch, params);
 }
 
 /**
@@ -79,6 +82,7 @@ export const postEmployee = (employee) => (dispatch) => {
  *  async action creator to patch employee
  **/
 export const patchEmployee = (employee) => (dispatch) => {
+	dispatch(requestUpdate());
 	const url = employee.id;
 	employee.id = 0;
 	return createFetch(url, HTTP_PATCH_METHOD, receiveUpdate,

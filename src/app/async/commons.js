@@ -52,7 +52,8 @@ const buildOptions = (httpMethod, payload) => {
 /**
  *  @param url relative address
  *  @param httpMethod 
- *  @param payload to be json stringified
+ *  @param payload to be json stringified,
+ *         params for the get method @see buildUrl TODO not nice
  *  @param onSuccess action creator function
  *         json => {}
  *  @param onFail Message 
@@ -60,8 +61,7 @@ const buildOptions = (httpMethod, payload) => {
  **/
 export function createFetch (url, httpMethod, onSucces, onFail, dispatch, payload = {}) {
 	const options = buildOptions(httpMethod, payload);
-	console.log(options);
-	return fetch(buildUrl(url), options)
+	return fetch(buildUrl(url, payload), options)
 		.then(response => {
 			if (response.ok) {
 				return response.json();
@@ -72,7 +72,6 @@ export function createFetch (url, httpMethod, onSucces, onFail, dispatch, payloa
 			return undefined;
 		})
 		.catch(error => {
-			console.error(error);
 			dispatch(
 				catchFail(FETCH_FAIL, -1, error)
 			);
