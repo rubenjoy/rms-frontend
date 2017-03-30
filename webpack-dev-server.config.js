@@ -37,6 +37,11 @@ const config = {
 		new TransferWebpackPlugin([
 			{from: 'www'},
 		], path.resolve(__dirname, 'src')),
+		new webpack.DefinePlugin({
+			'process.env': {
+				'NODE_ENV': '"development"'
+			}
+		})
 	],
 	module: {
         preLoaders: [
@@ -47,11 +52,15 @@ const config = {
             },
         ],
 		loaders: [
-		{
-			test: /\.js$/,
-			loaders: ['babel-loader'],
-			exclude: [nodeModulesPath],
-		},
+			{
+				test: /\.js$/,
+				loader: 'babel-loader',
+				exclude: [nodeModulesPath],
+			},
+			{
+				test: /\.css$/,
+				loader: "style-loader!css-loader!sass-loader",
+			},
 		],
 	}
 };
