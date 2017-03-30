@@ -78,7 +78,6 @@ export function createFetch (url, httpMethod, onSucces, onFail, dispatch, payloa
 		})
 		.then(json => {
 			if(json != null) {
-				console.log(json);
 				dispatch(onSucces(json));
 			}
 		})
