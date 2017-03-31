@@ -36,11 +36,12 @@ const catchFail = (type, errStatus, errText = "") => ({
  *  @param httpMethod 
  *  @param payload object, later be json stringified
  **/
-const buildOptions = (httpMethod, payload) => {
+const buildOptions = (httpMethod, payload, header = {}) => {
 	let result = {
 		method: httpMethod,
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			...header
 		}
 	}
 	if (httpMethod != HTTP_GET_METHOD) {
@@ -49,44 +50,65 @@ const buildOptions = (httpMethod, payload) => {
 	return result;
 }
 
+const _createFetch = (url, options, onSucces, onFail, dispatch) => {
+	return fetch(url, options)
+		.then(response => {
+			if (response.ok) {
+				return onSucces(response);
+			}
+			dispatch(onFail, response.status, response.statusText);
+			return undefined;
+		})
+		.catch(error => {
+			dispatch(FETCH_FAIL, onFail, error);
+		})
+}
+
+const _createParseJson = (promise, onSucces, onFail, dispatch) => {
+	return promise
+		.then(json => {
+			if (json != undefined) {
+				dispatch(onSucces(json));
+			}
+			// TODO dispatch when json undefined
+		})
+		.catch(error => {
+			console.error(error);
+			dispatch(catchFail(PARSE_JSON_FAIL, onFail, error));
+		});
+}
+
+const _createJson = (response) => {
+	return response.json();
+}
+
+/**
+ *  @param url relative addres
+ *  @param onSuccess to get json data
+ *  @param onFail Message
+ *  @param dispatch
+ *  @param params for GET parameters
+ **/
+export function createGetFetch(url, onSuccess, onFail, dispatch, params = {}) {
+	const options = buildOptions(HTTP_GET_METHOD, {});
+	const fetch = _createFetch(buildUrl(url, params), options, _createJson, onFail, dispatch)
+	return _createParseJson(fetch, onSuccess, onFail, dispatch);
+}
+
 /**
  *  @param url relative address
- *  @param httpMethod 
+ *  @param httpMethod
  *  @param payload to be json stringified,
  *         params for the get method @see buildUrl TODO not nice
  *  @param onSuccess action creator function
  *         json => {}
- *  @param onFail Message 
+ *  @param onFail Message
  *  @param dispatch
  **/
-export function createFetch (url, httpMethod, onSucces, onFail, dispatch, payload = {}) {
+export function createFetch(url, httpMethod, onSucces, onFail, dispatch, payload = {}) {
 	const options = buildOptions(httpMethod, payload);
-	return fetch(buildUrl(url, payload), options)
-		.then(response => {
-			if (response.ok) {
-				return response.json();
-			}
-			dispatch(
-				catchFail(onFail, response.status, response.statusText)
-			);
-			return undefined;
-		})
-		.catch(error => {
-			dispatch(
-				catchFail(FETCH_FAIL, -1, error)
-			);
-		})
-		.then(json => {
-			if(json != null) {
-				dispatch(onSucces(json));
-			}
-		})
-		.catch(error => {
-			console.error(error);
-			dispatch(
-				catchFail(PARSE_JSON_FAIL, -2, error)
-			);
-		});
+	const fetch = _createFetch(buildUrl(url, {}), options, _createJson, onFail, dispatch);
+	return _createParseJson(fetch, onSucces, onFail, dispatch);
 }
 
 /**
@@ -94,6 +116,7 @@ export function createFetch (url, httpMethod, onSucces, onFail, dispatch, payloa
  *  @param onSuccess action creator function, () => {}
  *  @param onFail Message
  *  @param dispatch
+ *  @deprecated planned to be removed
  **/
 export function createDeleteFetch(url, onSucces, onFail, dispatch) {
 	const options = buildOptions(HTTP_DELETE_METHOD, {});

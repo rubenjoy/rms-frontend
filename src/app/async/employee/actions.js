@@ -52,7 +52,7 @@ const receiveUpdate = (employee) => ({
 	employee
 })
 
-const URL = '/employees';
+export const URL = '/employees';
 
 /** 
  *  async action creator, that dispatch 

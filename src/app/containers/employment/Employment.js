@@ -1,5 +1,3 @@
-import uuid from 'uuid';
-
 // CHANGE:
 // 1. jobDesc to array of string
 // 2. jobTitle as String
@@ -21,7 +19,7 @@ function Employment(employment) {
 		{...emptyData, ...employment};
 
 
-	this.id = id || uuid.v1();
+	this.id = id || 'undefined';
 	this.startDate = startDate;
 	this.endDate = endDate;
 	this.employer = employer;

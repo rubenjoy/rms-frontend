@@ -1,5 +1,3 @@
-import uuid from 'uuid';
-
 const emptyData = {
 	branchOffice: '',
 	startDate: new Date('1927-09-09'),
@@ -19,7 +17,7 @@ function Location(location) {
 	this.startDate = startDate;
 	this.endDate = endDate;
 	this.employeeId = employeeId;
-	this.id = id || uuid.v1();
+	this.id = id || 'undefined';
 	this.activeInd = activeInd;
 }
 

@@ -3,8 +3,8 @@ import Employee from './Employee';
 /** 
  *  employee ID should be auto generated
  **/
-test('create empty employee', () => {
-	const result = new Employee(undefined);
+test('create empty employee, except id', () => {
+	const result = new Employee({id: 1});
 	const expected = {
 		name:'',
 		activeInd: false,
@@ -14,7 +14,8 @@ test('create empty employee', () => {
 		stream: '',
 		businessUnit: '',
 		hireDate: new Date('1927-09-09'),
-		location: '' 
+		location: '',
+		id: 1
 	}
 	expect(result.name).toEqual(expected.name);
 	expect(result.activeInd).toEqual(expected.activeInd);
@@ -26,7 +27,7 @@ test('create empty employee', () => {
 	expect(result.hireDate).toEqual(expected.hireDate);
 	expect(result.location).toEqual(expected.location);
 	expect(result.id === null).toEqual(false);
-	expect(result.id).not.toEqual('');
+	expect(result.id).toEqual(1);
 });
 
 test('create non-empty employee', () => {
@@ -78,7 +79,8 @@ test('create employee with extended data', () => {
 		stream: 'CDC',
 		businessUnit: 'AsteRX',
 		hireDate: new Date('2015-01-02'),
-		location: 'Bali'
+		location: 'Bali',
+		id: 1
 	};
 	const result = new Employee(empData);
 	const expected = {
@@ -104,7 +106,7 @@ test('create employee with extended data', () => {
 	expect(result.location).toEqual(expected.location);
 })
 
-test('Employee constructor with non empty data, without ID', () => {
+test('Employee constructor without ID, should throw error', () => {
 	const empData = {
 		name: 'Bunga Citra Lestari',
 		activeInd: true,
@@ -115,25 +117,8 @@ test('Employee constructor with non empty data, without ID', () => {
 		businessUnit: 'BTPN',
 		location: 'lombok'
 	};
-	const expected = {
-		name: 'Bunga Citra Lestari',
-		activeInd: true,
-		hireDate: new Date('2017-01-03'),
-		jobFamily: 'SE',
-		jobTitle: 'JP',
-		stream: 'Service',
-		businessUnit: 'BTPN',
-		location: 'lombok'
-	}
-	const result = new Employee(empData);
-
-	expect(result.id === null).toEqual(false);
-	expect(result.name).toEqual(expected.name);
-	expect(result.hireDate).toEqual(expected.hireDate);
-	expect(result.activeInd).toEqual(expected.activeInd);
-	expect(result.jobFamily).toEqual(expected.jobFamily);
-	expect(result.jobTitle).toEqual(expected.jobTitle);
-	expect(result.stream).toEqual(expected.stream);
-	expect(result.businessUnit).toEqual(expected.businessUnit);
-	expect(result.location).toEqual(expected.location);
+	const expectedError = "empty ID not allowed";
+	expect(() => {
+		new Employee(empData)
+	}).toThrow(expectedError);
 })

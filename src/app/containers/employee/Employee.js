@@ -1,5 +1,3 @@
-import uuid from 'uuid';
-
 const emptyData = {
 	name:'',
 	activeInd: false,
@@ -31,6 +29,9 @@ function Employee(emp) {
 		nationality, gender, maritalStatus,
 		division, suspendDate}
 		= {...emptyData, ...emp};
+	if (id === undefined) {
+		throw new Error("empty ID not allowed");
+	}
 	this.name = name;
 	this.activeInd = activeInd;
 	this.phone = phone;
@@ -38,17 +39,17 @@ function Employee(emp) {
 	this.jobTitle = jobTitle;
 	this.stream =  stream;
 	this.businessUnit = businessUnit;
-	this.hireDate = hireDate;
+	this.hireDate = new Date(hireDate.toString());
 	this.location = location;
-	this.id = id || uuid.v1();
-	this.birthDate = birthDate;
+	this.id = id;
+	this.birthDate = new Date(birthDate.toString());
 	this.email = email;
 	this.employmentStatus = employmentStatus;
 	this.nationality = nationality;
 	this.gender = gender;
 	this.maritalStatus = maritalStatus;
 	this.division = division;
-	this.suspendDate = suspendDate;
+	this.suspendDate = new Date(suspendDate.toString());
 }
 
 export default Employee;

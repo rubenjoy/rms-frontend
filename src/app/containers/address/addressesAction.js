@@ -19,4 +19,10 @@ function removeAddress(id) {
 	};
 }
 
-export {addAddress, modifyAddress, removeAddress};
+function cleanAddress() {
+	return {
+		type: 'CLEAN_ADDRESS'
+	};
+}
+
+export {addAddress, cleanAddress, modifyAddress, removeAddress};

@@ -58,7 +58,7 @@ const buildEmployee = (emp) => {
 		hireDate, birthDate, nationality,
 		maritalStatus, division, 
 		status, suspendDate, email,
-		phone, grade, id} = emp;
+		phone, grade, id} = {id: 'undefined', ...emp};
 
 	const employee = new Employee({
 		name: firstName.trim() + ' ' + lastName.trim(),

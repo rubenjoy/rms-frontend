@@ -1,5 +1,3 @@
-import uuid from 'uuid';
-
 const emptyData = {
 	relation: 0,
 	name: '',
@@ -21,7 +19,7 @@ function Dependant(dependant) {
 	this.birthDate = birthDate;
 	this.activeInd = activeInd;
 	this.employeeId = employeeId;
-	this.id = id || uuid.v1();
+	this.id = id || 'undefined';
 	this.gender = gender;
 }
 

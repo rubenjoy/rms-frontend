@@ -18,6 +18,7 @@
     "env": {
     	"browser": true,
     	"jest": true,
+        "node": true,
         "jasmine": true
     },
     "rules": {

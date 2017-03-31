@@ -107,7 +107,8 @@ test('build Employee from Emp w/o id', () => {
 		division: 1,
 		email: 'mike.jacob@mitrais.com',
 		jobFamily: 'SE',
-		jobTitle: 'PG'
+		jobTitle: 'PG',
+		id: 'undefined'
 	})
 
 	expect(result.name).toEqual(expected.name);
@@ -207,7 +208,8 @@ test('build Employee using emp reducer', () => {
 		hireDate: new Date('2017-01-03'),
 		grade: 2,
 		division: 1,
-		email: 'mike.jacob@mitrais.com'
+		email: 'mike.jacob@mitrais.com',
+		id: 'undefined'
 	});
 
 	expect(result.name).toEqual(expected.name);

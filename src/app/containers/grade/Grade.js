@@ -1,5 +1,3 @@
-import uuid from 'uuid';
-
 const emptyData = {
 	startDate: new Date('1927-09-09'),
 	endDate: new Date('1927-09-09'),
@@ -19,7 +17,7 @@ function Grade(oGrade) {
 	this.grade = grade;
 	this.devStage = devStage;
 	this.employeeId = employeeId;
-	this.id = id || uuid.v1();
+	this.id = id || 'undefined';
 }
 
 export default Grade;

@@ -6,9 +6,19 @@ The project still in development process.
 TODO:
  1. refactoring wrapping dialog, which used in employment history and office location. For now the wrapping dialong still repeating which against DRY rule.
  2. commons/*SelectField need refactoring.
- 3. wiring to RESTful API
+ 3. <del>wiring to RESTful API</del> IN PROGRESS
  4. search, sorting the employee list
- 4. UX inconsistencies, when user hit cancel button (or lost focus) on a form the store already changed. Pass temporary state to form may solve the case IMO.
+ 5. UX inconsistencies, when user hit cancel button (or lost focus) on a form the store already changed. Pass temporary state to form may solve the case IMO.
+ 6. re-structure the store, <em>employees</em> list is changed
+ into employees object or <em>associative map</em> with ID as key
+ and employee as value.
+ 7. isolate the style into css file
+
+CHANGELOG
+
+1. 2017-03-31 all <em>ID</em> is string of url relative address,
+not a number.
+2. 2017-03-31 remove UUID dependencies
 
 COMMANDS 
 

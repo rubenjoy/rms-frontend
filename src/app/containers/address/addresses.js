@@ -21,6 +21,8 @@ function addresses(state = [], action) {
 						item
 					)
 				);
+		case 'CLEAN_ADDRESS':
+			return [];
 		default: 
 			return state;
 	}

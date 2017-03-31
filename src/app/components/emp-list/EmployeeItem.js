@@ -4,8 +4,6 @@ import Avatar from 'material-ui/Avatar';
 import {ListItem} from 'material-ui/List';
 import muiThemeable from 'material-ui/styles/muiThemeable';
 
-import {divisionArray} from '../../utils/optionsConfig';
-
 const avatarImg = 'dummy-assets/avatar-unknown.png';
 
 const styles = (muiTheme) => ({
@@ -62,7 +60,7 @@ const EmployeeItem = ({muiTheme, employee, selected, onClick}) => (
 		secondaryText={<SecondaryText muiTheme={muiTheme} 
 			jobFamily={employee.jobFamily} jobTitle={employee.jobTitle} 
 			stream={employee.stream} businessUnit={employee.businessUnit} 
-			division={divisionArray[employee.division]}
+			division={employee.division}
 			location={employee.location} phone={employee.phone}/>}
 		secondaryTextLines={2}
 		onTouchTap={() => {onClick(employee)}}

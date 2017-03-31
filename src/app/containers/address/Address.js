@@ -1,5 +1,3 @@
-import uuid from 'uuid';
-
 const emptyData = {
 	address: '',
 	activeInd: false,
@@ -14,7 +12,7 @@ function Address(addressData) {
 	this.address = address;
 	this.activeInd = activeInd;
 	this.employeeId = employeeId;
-	this.id = id || uuid.v1();
+	this.id = id || 'undefined';
 }
 
 export default Address;

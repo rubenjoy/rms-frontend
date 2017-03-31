@@ -1,4 +1,5 @@
 import {combineReducers} from 'redux';
+import reduceReducers from 'reduce-reducers';
 
 import addresses from './containers/address/addresses';
 import currentEmp from './containers/emp/currentEmp';
@@ -7,6 +8,8 @@ import employees from './containers/employee/employees';
 import employments from './containers/employment/employments';
 import grades from './containers/grade/grades';
 import locations from './containers/location/locations'
+
+import {employees as asyncEmployees} from './async/employee/reducers';
 
 // this is RMS App container
 // contains :
@@ -20,7 +23,7 @@ import locations from './containers/location/locations'
 //		7. Address from current Employee
 
 const rmsApp = combineReducers({
-					employees, 
+					employees: reduceReducers(employees, asyncEmployees),
 					currentEmp,
 					dependants,
 					grades,

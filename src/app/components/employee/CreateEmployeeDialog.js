@@ -9,7 +9,7 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import muiThemeable from 'material-ui/styles/muiThemeable';
 
 import {addEmployee} from '../../containers/employee/employeesAction';
-import CreateEmployeeForm from './CreateEmployeeForm';
+import EmployeeForm from './EmployeeForm';
 import Emp, {buildEmployee,
 		isValid} from '../../containers/emp/Emp';
 
@@ -157,10 +157,12 @@ class CreateEmployeeDialog extends Component {
 				actionsContainerStyle={styles(this.props.muiTheme).actions}
 				titleStyle={styles(this.props.muiTheme).title}
 			>
-				<CreateEmployeeForm employee={this.state.emp}
-					callbacks={this.callbacks}
-					onChange={this.handleChange}
-					errors={this.state.errorMsg}
+				<EmployeeForm emp={this.state.emp} errors={this.state.errorMsg}
+					onChange={emp => {
+						this.setState({
+							emp: new Emp({...this.state.emp, ...emp})
+						})
+					}}
 				/>
 			</Dialog>
 		</div>;
