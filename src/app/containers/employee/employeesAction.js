@@ -1,3 +1,8 @@
+export const ADD_EMPLOYEE = 'ADD_EMPLOYEE';
+export const TOGGLE_EMPLOYEE = 'TOGGLE_EMPLOYEE';
+export const DELETE_EMPLOYEE = 'DELETE_EMPLOYEE';
+export const UPDATE_EMPLOYEE = 'UPDATE_EMPLOYEE';
+
 const addEmployee = (employee) => {
 	return {
 		type: 'ADD_EMPLOYEE',
