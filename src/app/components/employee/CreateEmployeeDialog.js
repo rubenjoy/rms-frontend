@@ -8,10 +8,10 @@ import FlatButton from 'material-ui/FlatButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import muiThemeable from 'material-ui/styles/muiThemeable';
 
-import {addEmployee} from '../../containers/employee/employeesAction';
 import EmployeeForm from './EmployeeForm';
 import Emp, {buildEmployee,
 		isValid} from '../../containers/emp/Emp';
+import {postEmployee} from '../../async/employee/actions';
 
 const styles = (muiTheme) => ({
 	root: {
@@ -42,12 +42,8 @@ const styles = (muiTheme) => ({
 const mapStateToProps = (/*state*/) => {
 	return {};
 }
-const mapDispatchToProps = (dispatch) => {
-	return {
-		onAddClick: (emp) => {
-			dispatch(addEmployee(buildEmployee(emp)));
-		}
-	}
+const mapDispatchToProps = {
+	onAddEmployee: postEmployee
 }
 
 class CreateEmployeeDialog extends Component {
@@ -67,51 +63,11 @@ class CreateEmployeeDialog extends Component {
 	handleClose = () => {
 		this.setState({open: false});
 	}
-	handleChange = (event/*, value*/) => {
-		const target = event.target;
-		this.setState({
-			emp: {
-				...this.state.emp,
-				[target.name]: target.value
-			}
-		});
-	}
-	handleDateChange = (id) => (
-		(e,date) => {
-			const d = date !== undefined ? date : new Date();
-			this.setState({
-				emp: {
-					...this.state.emp,
-					[id]: d
-				}
-			})
-		}
-	)
-	handleSelectChange = (id) => (
-		(e, key, value) => {
-			this.setState({
-				emp: {
-					...this.state.emp,
-					[id]: value
-				}
-			})
-		}
-	)
-	callbacks = {
-		onSuspendChange: this.handleDateChange('suspendDate'),
-		onGenderChange: this.handleSelectChange('gender'),
-		onNationalityChange: this.handleSelectChange('nationality'),
-		onMaritalStatusChange: this.handleSelectChange('maritalStatus'),
-		onBirthDateChange: this.handleDateChange('birthDate'),
-		onHireDateChange: this.handleDateChange('hireDate'),
-		onGradeChange: this.handleSelectChange('grade'),
-		onDivisionChange: this.handleSelectChange('division')
-	}
 	onSubmit = () => {
 		const errorMsg = isValid(this.state.emp);
 		if(errorMsg === undefined) {
 			this.handleClose();
-			this.props.onAddClick(this.state.emp);
+			this.props.onAddEmployee(buildEmployee(this.state.emp));
 			this.setState({
 				emp: new Emp({
 					hireDate: new Date(),

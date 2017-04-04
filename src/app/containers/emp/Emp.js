@@ -1,9 +1,16 @@
 import {validate} from 'validate.js';
 
 import Employee from '../employee/Employee';
-import {jobFamilyArray, 
-	jobTitleArray} from '../../utils/optionsConfig';
-import {lookupGrade} from '../../utils/optionsConfig';
+import {
+	divisionArray,
+	jobFamilyArray,
+	jobTitleArray,
+	lookupDivision,
+	lookupGender,
+	lookupGrade,
+	lookupMaritalStatus,
+	lookupNationality
+} from '../../utils/optionsConfig';
 
 const emptyEmp = {
 	firstName: '',
@@ -68,7 +75,7 @@ const buildEmployee = (emp) => {
 		nationality,
 		gender,
 		maritalStatus,
-		division,
+		division: divisionArray[division],
 		employmentStatus: status,
 		email, 
 		phone,
@@ -99,10 +106,10 @@ const rebuildEmp = (employee) => {
 		hireDate,
 		suspendDate,
 		birthDate,
-		nationality,
-		gender,
-		maritalStatus,
-		division, 
+		nationality: lookupNationality(nationality),
+		gender: lookupGender(gender),
+		maritalStatus: lookupMaritalStatus(maritalStatus),
+		division: lookupDivision(division), 
 		status: employmentStatus,
 		email,
 		phone,

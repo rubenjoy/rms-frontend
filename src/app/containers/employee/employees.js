@@ -5,11 +5,17 @@ import {
 	TOGGLE_EMPLOYEE,
 	UPDATE_EMPLOYEE
 } from './employeesAction';
+import {
+	POST_EMPLOYEE_SUCCESS,
+	PATCH_EMPLOYEE_SUCCESS
+} from '../../async/employee/actions';
 
 const employees = (state = [], action) => {
 	switch (action.type) {
-		case ADD_EMPLOYEE:
+		case POST_EMPLOYEE_SUCCESS:
+		case ADD_EMPLOYEE: {
 			return [...state, new Employee(action)];
+		}
 		case TOGGLE_EMPLOYEE:
 			return state.map((item) => {
 				if (item.id === action.id) {
@@ -21,7 +27,8 @@ const employees = (state = [], action) => {
 			return state.filter((item) => {
 				return item.id !== action.id;
 			});
-		case UPDATE_EMPLOYEE:
+		case PATCH_EMPLOYEE_SUCCESS:
+		case UPDATE_EMPLOYEE: {
 			return state.map((item) => {
 				if (item.id === action.id) {
 					return new Employee({
@@ -30,6 +37,7 @@ const employees = (state = [], action) => {
 				}
 				return item;
 			})
+		}
 		default:
 			return state;
 	}

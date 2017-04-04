@@ -5,11 +5,13 @@ import {connect} from 'react-redux';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 
-import {addAddress,
-		modifyAddress,
-		removeAddress} from '../../containers/address/addressesAction';
+import {modifyAddress} from '../../containers/address/addressesAction';
 import Address from '../../containers/address/Address';
 import InputRow from './InputRow';
+import {
+	postAddress,
+	deleteAddress
+} from '../../async/address/actions';
 
 const defaultStyles = {
 	root: {
@@ -41,20 +43,12 @@ const mapStateToProps = (state) => ({
 	employee: state.currentEmp,
 	addresses: state.addresses
 })
-const mapDispatchToProps = (dispatch) => ({
-	addClick: (id) => {
-		dispatch(addAddress(new Address({
-					employeeId: id
-				})));
-	},
-	deleteClick: (id) => {
-		dispatch(removeAddress(id));
-	},
-	onChange: (location) => {
-		dispatch(modifyAddress(location));
-	}
-})
-	
+const mapDispatchToProps = {
+	addClick: postAddress,
+	deleteClick: deleteAddress,
+	onChange: modifyAddress
+}
+
 const AddressForm = (props) => {
 	const styles = props.styles || defaultStyles;
 	const addresses = props.addresses;
@@ -84,7 +78,10 @@ const AddressForm = (props) => {
 				</table></form>
 			}
 			<FloatingActionButton style={styles.addButton}
-				onTouchTap={() => props.addClick(props.employee.id)}
+				onTouchTap={() => {
+					props.addClick(
+						props.employee.id, new Address());
+				}}
 			>
 				<ContentAdd />
 			</FloatingActionButton>

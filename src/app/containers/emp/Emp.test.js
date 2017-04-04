@@ -104,7 +104,7 @@ test('build Employee from Emp w/o id', () => {
 		suspendDate: new Date('2019-01-02'),
 		hireDate: new Date('2017-01-03'),
 		grade: 2,
-		division: 1,
+		division: 'CDC AsteRx',
 		email: 'mike.jacob@mitrais.com',
 		jobFamily: 'SE',
 		jobTitle: 'PG',
@@ -155,7 +155,7 @@ test('build Employee w/ id', () => {
 		suspendDate: new Date('2019-01-02'),
 		hireDate: new Date('2017-01-03'),
 		grade: 2,
-		division: 1,
+		division: 'CDC AsteRx',
 		email: 'mike.jacob@mitrais.com',
 		id: '1A',
 	})
@@ -207,7 +207,7 @@ test('build Employee using emp reducer', () => {
 		suspendDate: new Date('2019-01-02'),
 		hireDate: new Date('2017-01-03'),
 		grade: 2,
-		division: 1,
+		division: 'CDC AsteRx',
 		email: 'mike.jacob@mitrais.com',
 		id: 'undefined'
 	});

@@ -21,7 +21,7 @@ import LocationView from '../location/LocationView';
 import ModifyEmployeeForm from '../employee/ModifyEmployeeForm';
 
 import {buildEmployee} from '../../containers/emp/Emp';
-import {modifyEmployee} from '../../containers/employee/employeesAction';
+import {patchEmployee} from '../../async/employee/actions';
 
 const styles = {
 	root: {
@@ -37,23 +37,19 @@ const styles = {
 const mapStateToProps = (state) => ({
 	employee: state.currentEmp
 });
-const mapDispatchToProps = (dispatch) => ({
-	onEmpSubmitClick: (empData) => {
-		if (empData.id !== '') {
-			dispatch(modifyEmployee(
-				buildEmployee(empData)
-			));
-		}
-	}
-});
+const mapDispatchToProps = {
+	patchEmployee: patchEmployee
+};
 
-const TabPane = ({employee, style, onEmpSubmitClick}) => (
+const TabPane = ({employee, style, patchEmployee}) => (
 	<Tabs style={style ||  styles.root}>
 		<Tab icon={<SocialPerson />}>
 			<FormWrapper style={styles.form}
 				title="Personal Record"
 				onSubmitClick={() => {
-					onEmpSubmitClick(employee);
+					if (employee.id !== undefined) {
+						patchEmployee(buildEmployee(employee));
+					}
 				}}
 			>
 				{employee.id === '' ? 

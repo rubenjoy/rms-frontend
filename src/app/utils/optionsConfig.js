@@ -1,38 +1,47 @@
+const createLookup = (options) => (text) => {
+	const item =
+		options.find(item => item.text === text);
+	return (item === undefined ? 0 : item.id);
+}
 
-const genderOptions = [
+const createArray = (options) => {
+	return options.map(item => item.text);
+}
+
+export const genderOptions = [
 	{id: 0, text: 'Male'},
 	{id: 1, text: 'Female'}
 ];
 
-export {genderOptions};
+export const lookupGender = createLookup(genderOptions);
 
-const maritalStatusOptions = [
+export const maritalStatusOptions = [
 	{id: 0, text: 'Single'},
 	{id: 1, text: 'Married'}
 ];
 
-export {maritalStatusOptions};
+export const lookupMaritalStatus = createLookup(maritalStatusOptions);
 
-const nationalityOptions = [
+export const nationalityOptions = [
 	{id: 0, text: 'Indonesian'},
 	{id: 1, text: 'Australian'},
 	{id: 2, text: 'Singaporean'},
 	{id: 3, text: 'Vietnamese'}
 ];
 
-export {nationalityOptions};
+export const lookupNationality = createLookup(nationalityOptions);
 
-const gradeOptions = [
+export const gradeOptions = [
 	{id: 0, text: 'SE-JP'},
 	{id: 1, text: 'SE-PG'},
 	{id: 2, text: 'SE-AP'},
 	{id: 3, text: 'SE-AN'},
 ];
 
-const gradeArray = gradeOptions.map(item => (item.text));
-const jobFamilyArray = gradeOptions.map(item => (item.text.split('-',2)[0]));
-const jobTitleArray = gradeOptions.map(item => (item.text.split('-',2)[1]));
-const lookupGrade = (jobFamily, jobTitle) => {
+export const gradeArray = createArray(gradeOptions);
+export const jobFamilyArray = gradeOptions.map(item => (item.text.split('-',2)[0]));
+export const jobTitleArray = gradeOptions.map(item => (item.text.split('-',2)[1]));
+export const lookupGrade = (jobFamily, jobTitle) => {
 	const item  = 
 		gradeOptions.find(
 			item => (item.text === jobFamily+'-'+jobTitle)
@@ -40,25 +49,18 @@ const lookupGrade = (jobFamily, jobTitle) => {
 	return (item === undefined ? 0 : item.id);
 };
 
-export {gradeArray, jobFamilyArray, jobTitleArray};
-export {lookupGrade};
-
-export {gradeOptions};
-
-const divisionOptions = [
+export const divisionOptions = [
 	{id: 0, text: 'CDC Java'},
 	{id: 1, text: 'CDC AsteRx'},
 	{id: 2, text: 'CDC Ruby'},
 	{id: 3, text: 'CDC Java Web'}
 ];
 
-export {divisionOptions};
+export const divisionArray = createArray(divisionOptions);
 
-const divisionArray = divisionOptions.map(item => (item.text));
+export const lookupDivision = createLookup(divisionOptions);
 
-export {divisionArray};
-
-const devStageOptions = [
+export const devStageOptions = [
 	{id: 0, text: 'DS1'},
 	{id: 1, text: 'DS2'},
 	{id: 2, text: 'DS3'},
@@ -73,18 +75,14 @@ const devStageOptions = [
 	{id: 11, text: 'DS12'},
 ];
 
-export {devStageOptions};
-
-const depTypeOptions = [
+export const depTypeOptions = [
 	{id: 0, text: 'Husband'},
 	{id: 1, text: 'Wife'},
 	{id: 2, text: 'Daugther'},
 	{id: 3, text: 'Son'}
 ];
 
-export {depTypeOptions};
-
-const locationOptions = [
+export const locationOptions = [
 	{id: 0, text: 'Bali Office'},
 	{id: 1, text: 'Yogyakarta Office'},
 	{id: 2, text: 'Jakarta Office'},
@@ -94,8 +92,4 @@ const locationOptions = [
 	{id: 6, text: 'Vietname Office'}
 ];
 
-export {locationOptions};
-
-const locationArray = locationOptions.map(item => (item.text));
-
-export {locationArray};
+export const locationArray = createArray(locationOptions);

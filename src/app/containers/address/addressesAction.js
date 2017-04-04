@@ -1,28 +1,31 @@
-function addAddress(address) {
+export const ADD_ADDRESS = 'ADD_ADDRESS';
+export const DELETE_ADDRESS = 'DELETE_ADDRESS';
+export const UPDATE_ADDRESS = 'UPDATE_ADDRESS';
+export const CLEAN_ADDRESS = 'CLEAN_ADDRESS';
+
+export function addAddress(address) {
 	return {
-		type: 'ADD_ADDRESS',
+		type: ADD_ADDRESS,
 		...address
 	};
 }
 
-function modifyAddress(address) {
+export function modifyAddress(address) {
 	return {
-		type: 'UPDATE_ADDRESS',
+		type: UPDATE_ADDRESS,
 		...address
 	};
 }
 
-function removeAddress(id) {
+export function removeAddress(id) {
 	return {
-		type: 'DELETE_ADDRESS',
+		type: DELETE_ADDRESS,
 		id
 	};
 }
 
-function cleanAddress() {
+export function cleanAddress() {
 	return {
-		type: 'CLEAN_ADDRESS'
+		type: CLEAN_ADDRESS
 	};
 }
-
-export {addAddress, cleanAddress, modifyAddress, removeAddress};

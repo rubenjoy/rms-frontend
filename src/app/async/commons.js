@@ -1,4 +1,4 @@
-const URL_ADDR = 'http://localhost:8080/rms/api/';
+const URL_ADDR = 'http://localhost:8080/rms/api';
 
 export const HTTP_GET_METHOD = 'GET';
 export const HTTP_POST_METHOD = 'POST';
@@ -27,8 +27,7 @@ const buildUrl = (relativeUrl, params) => {
 };
 
 const catchFail = (type, errStatus, errText = "") => ({
-	type: type, 
-	errStatus, errText
+	type, errStatus, errText
 });
 
 /**
@@ -50,32 +49,44 @@ const buildOptions = (httpMethod, payload, header = {}) => {
 	return result;
 }
 
-const _createFetch = (url, options, onSucces, onFail, dispatch) => {
+/**
+ *  @param url address
+ *  @param options for fetch
+ *  @param onSuccess function (response) {}
+ *  @param onFail TODO function (error) {}
+ **/
+const _createFetch = (url, options, onSucces) => {
 	return fetch(url, options)
-		.then(response => {
-			if (response.ok) {
-				return onSucces(response);
+		.then(
+			response => {
+				if (response.ok) {
+					return onSucces(response);
+				}
+				console.error(response.statusText);
+				throw new Error('HTTP Status: '+response.status);
+			},
+			error => {
+				throw new Error(error.message);
 			}
-			dispatch(onFail, response.status, response.statusText);
-			return undefined;
-		})
-		.catch(error => {
-			dispatch(FETCH_FAIL, onFail, error);
-		})
+		)
 }
 
+/**
+ *  @param promise 
+ *  @param onSuccess function (json) {}
+ *  @param onFail TODO function (error) {}
+ *  @param dispatch TODO must be omitted
+ **/
 const _createParseJson = (promise, onSucces, onFail, dispatch) => {
 	return promise
-		.then(json => {
-			if (json != undefined) {
+		.then(
+			json => {
 				dispatch(onSucces(json));
+			},
+			error => {
+				dispatch(catchFail(FETCH_FAIL, -1, error.message));
 			}
-			// TODO dispatch when json undefined
-		})
-		.catch(error => {
-			console.error(error);
-			dispatch(catchFail(PARSE_JSON_FAIL, onFail, error));
-		});
+		);
 }
 
 const _createJson = (response) => {
@@ -83,15 +94,15 @@ const _createJson = (response) => {
 }
 
 /**
- *  @param url relative addres
- *  @param onSuccess to get json data
- *  @param onFail Message
- *  @param dispatch
+ *  @param url relative address
+ *  @param onSuccess function (json) {}
+ *  @param onFail Message TODO become function(error) {}
+ *  @param dispatch TODO must be omitted
  *  @param params for GET parameters
  **/
 export function createGetFetch(url, onSuccess, onFail, dispatch, params = {}) {
 	const options = buildOptions(HTTP_GET_METHOD, {});
-	const fetch = _createFetch(buildUrl(url, params), options, _createJson, onFail, dispatch)
+	const fetch = _createFetch(buildUrl(url, params), options, _createJson)
 	return _createParseJson(fetch, onSuccess, onFail, dispatch);
 }
 
@@ -99,39 +110,26 @@ export function createGetFetch(url, onSuccess, onFail, dispatch, params = {}) {
  *  @param url relative address
  *  @param httpMethod
  *  @param payload to be json stringified,
- *         params for the get method @see buildUrl TODO not nice
- *  @param onSuccess action creator function
- *         json => {}
- *  @param onFail Message
- *  @param dispatch
+ *  @param onSuccess function (json) {}
+ *  @param onFail Message TODO replaced with function (error) {}
+ *  @param dispatch TODO must be omitted
  **/
 export function createFetch(url, httpMethod, onSucces, onFail, dispatch, payload = {}) {
 	const options = buildOptions(httpMethod, payload);
-	const fetch = _createFetch(buildUrl(url, {}), options, _createJson, onFail, dispatch);
+	const fetch = _createFetch(buildUrl(url, {}), options, _createJson);
 	return _createParseJson(fetch, onSucces, onFail, dispatch);
 }
 
 /**
  *  @param url relative address
- *  @param onSuccess action creator function, () => {}
- *  @param onFail Message
- *  @param dispatch
- *  @deprecated planned to be removed
+ *  @param onSuccess function (response) {}
+ *  @param onFail Message TODO replaced with function (error) {}
+ *  @param dispatch TODO must be omitted
  **/
-export function createDeleteFetch(url, onSucces, onFail, dispatch) {
+export function createDeleteFetch(url, onSuccess, onFail, dispatch) {
 	const options = buildOptions(HTTP_DELETE_METHOD, {});
-	return fetch(buildUrl(url), options)
-		.then(response => {
-			if (response.ok) {
-				dispatch(onSucces());
-				return undefined;
-			}
-			dispatch(catchFail(
-				onFail, response.status, response.statusText
-			));
-		})
+	return _createFetch(buildUrl(url, {}), options, onSuccess)
 		.catch(error => {
-			console.error(error);
-			dispatch(catchFail(FETCH_FAIL, -1, error));
-		})
+			dispatch(catchFail(onFail, -1, error.message));
+		});
 }

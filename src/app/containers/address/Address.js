@@ -12,7 +12,7 @@ function Address(addressData) {
 	this.address = address;
 	this.activeInd = activeInd;
 	this.employeeId = employeeId;
-	this.id = id || 'undefined';
+	this.id = id || '0';
 }
 
 export default Address;

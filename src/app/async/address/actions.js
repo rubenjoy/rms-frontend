@@ -20,7 +20,7 @@ export const PATCH_ADDRESS = 'PATCH_ADDRESS';
 export const PATCH_ADDRESS_SUCCESS  = 'PATCH_ADDRESS_SUCCESS';
 export const PATCH_ADDRESS_FAIL = 'PATCH_ADDRESS_FAIL';
 
-export const DELETE_ADDRESS = 'DELETE_ADDRESS';
+export const DELETE_ADDRESS_ASYNC = 'DELETE_ADDRESS_ASYNC';
 export const DELETE_ADDRESS_SUCCESS = 'DELETE_ADDRESS_SUCCESS';
 export const DELETE_ADDRESS_FAIL = 'DELETE_ADDRESS_FAIL';
 
@@ -39,7 +39,7 @@ const requestCreate = () => ({
 
 const receiveCreate = (address) => ({
 	type: POST_ADDRESS_SUCCESS,
-	address
+	...address
 })
 
 const requestUpdate = () => ({
@@ -48,11 +48,11 @@ const requestUpdate = () => ({
 
 const receiveUpdate = (address) => ({
 	type: PATCH_ADDRESS_SUCCESS,
-	address
+	...address
 })
 
 const requestDelete = () => ({
-	type: DELETE_ADDRESS
+	type: DELETE_ADDRESS_ASYNC
 })
 
 const receiveDelete = (id) => ({
@@ -99,6 +99,9 @@ export const patchAddress = (address) => (dispatch) => {
  **/
 export const deleteAddress = (addressId) => (dispatch) => {
 	dispatch(requestDelete());
-	return createDeleteFetch(addressId, receiveDelete,
+	const wrappedFn = () => {
+		dispatch(receiveDelete(addressId));
+	}
+	return createDeleteFetch(addressId, wrappedFn,
 		DELETE_ADDRESS_FAIL, dispatch);
 }

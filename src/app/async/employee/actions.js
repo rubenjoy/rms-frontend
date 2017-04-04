@@ -2,7 +2,7 @@ require('isomorphic-fetch');
 
 import {
 	createFetch,
-	HTTP_GET_METHOD,
+	createGetFetch,
 	HTTP_PATCH_METHOD,
 	HTTP_POST_METHOD
 } from './../commons';
@@ -30,17 +30,13 @@ const receiveEmployees = (employees) => ({
 	employees
 });
 
-export const catchFail = (type, errStatus, errText = "") => ({
-	type, errStatus, errText
-});
-
 const requestCreate = () => ({
 	type: POST_EMPLOYEE
 })
 
 const receiveCreate = (employee) => ({
 	type: POST_EMPLOYEE_SUCCESS,
-	employee
+	...employee
 })
 
 const requestUpdate = () => ({
@@ -49,7 +45,7 @@ const requestUpdate = () => ({
 
 const receiveUpdate = (employee) => ({
 	type: PATCH_EMPLOYEE_SUCCESS,
-	employee
+	...employee
 })
 
 export const URL = '/employees';
@@ -58,13 +54,13 @@ export const URL = '/employees';
  *  async action creator, that dispatch 
  *  @param page number default to 0
  **/
-export const getEmployees = (page = 0) => (dispatch) => {
+export const getEmployees = (page = 0) => (dispatch)  => {
 	dispatch(requestEmployees());
 	const params = {
 		page,
 		size: PAGE_SIZE
 	}
-	return createFetch(URL, HTTP_GET_METHOD, receiveEmployees,
+	return createGetFetch(URL, receiveEmployees,
 		GET_EMPLOYEES_FAIL, dispatch, params);
 }
 

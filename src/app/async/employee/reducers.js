@@ -3,12 +3,9 @@ import {
 	GET_EMPLOYEES_SUCCESS,
 	GET_EMPLOYEES_FAIL,
 	POST_EMPLOYEE,
-	POST_EMPLOYEE_SUCCES,
 	POST_EMPLOYEE_FAIL,
 	PATCH_EMPLOYEE,
-	PATCH_EMPLOYEE_SUCCESS,
-	PATCH_EMPLOYEE_FAIL,
-	URL
+	PATCH_EMPLOYEE_FAIL
 } from './actions';
 
 import Employee from '../../containers/employee/Employee';
@@ -26,23 +23,17 @@ export const employees = (state = [], action) => {
 			// TODO display error message
 			return state;
 		case GET_EMPLOYEES_SUCCESS: {
+			let existingIds = state
+				.filter(employee => employee.id !== undefined)
+				.map(employee => employee.id);
 			let employees = [...state];
 			action.employees.forEach(employee => {
-				employees.push(new Employee(employee));
+				if (existingIds.indexOf(employee.id) < 0) {
+					employees.push(new Employee(employee));
+					existingIds.push(employee.id);
+				}
 			})
-			// TODO eliminate possibilities of duplicated employee
 			return employees;
-		}
-		case POST_EMPLOYEE_SUCCES:
-		case PATCH_EMPLOYEE_SUCCESS: {
-			const employee = new Employee(action.employee);
-			if (employee.id.toString().match(/^\d$/)) {
-				employee.id = URL + '/' + employee.id;
-			}
-			return [
-				...state, 
-				employee
-			];
 		}
 		default: 
 			return state;

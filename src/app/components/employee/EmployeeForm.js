@@ -235,7 +235,7 @@ const EmployeeForm = (props) => {
 						style={styles.formInput}
 						hintStyle={styles.formInput}
 						inputStyle={styles.formInput}
-						value={employee.phone}
+						value={employee.phone || ''}
 						errorText={errorMsg.phone}
 						onChange={(e,value) => props.onChange({
 							id: employee.id,
@@ -248,7 +248,7 @@ const EmployeeForm = (props) => {
 						style={styles.formInput}
 						hintStyle={styles.formInput}
 						inputStyle={styles.formInput}
-						value={employee.email}
+						value={employee.email || ''}
 						errorText={errorMsg.email}
 						onChange={(e,value) => props.onChange({
 							id: employee.id,

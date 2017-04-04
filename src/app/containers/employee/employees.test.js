@@ -1,8 +1,9 @@
 import employees from './employees';
 import {modifyEmployee} from './employeesAction';
-
-// TODO test for not empty employees or more than 1 employee
-// TODO negative test
+import {
+	POST_EMPLOYEE_SUCCESS,
+	PATCH_EMPLOYEE_SUCCESS
+} from '../../async/employee/actions';
 
 test('add employee to empty', ()=> {
 	const emptyEmployees = [];
@@ -154,4 +155,54 @@ test('modify employee in store', () => {
 	}];
 
 	expect(result).toEqual(expected);
+})
+
+test('post employee success test', () => {
+	const emptyState = [];
+	const action = {
+		type: POST_EMPLOYEE_SUCCESS,
+		name: 'mukidi',
+		activeInd: true,
+		phone: '0815123456',
+		jobFamily: 'SE',
+		jobTitle: 'PG',
+		stream: 'CDC',
+		businessUnit: 'Ruby',
+		hireDate: new Date('2017-01-03'),
+		location: 'Bali',
+		id: '/employees/50'
+	};
+
+	const result = employees(emptyState, action);
+	expect(result.length).toEqual(1);
+	expect(result[0].name).toEqual('mukidi');
+	expect(result[0].activeInd).toEqual(true);
+})
+
+test('patch employee success test', () => {
+	const initialState = [{
+		id: '/employees/50',
+		name: 'Mary Jane',
+		stream: 'Bootcamp'
+	}];
+	const action = {
+		type: PATCH_EMPLOYEE_SUCCESS,
+		name: 'mukidi',
+		activeInd: true,
+		phone: '0815123456',
+		jobFamily: 'SE',
+		jobTitle: 'PG',
+		stream: 'CDC',
+		businessUnit: 'Ruby',
+		hireDate: new Date('2017-01-03'),
+		location: 'Bali',
+		id: '/employees/50'
+	};
+
+	const result = employees(initialState, action);
+	expect(result.length).toEqual(1);
+	expect(result[0].name).not.toEqual('Mary Jane');
+	expect(result[0].name).toEqual('mukidi');
+	expect(result[0].stream).not.toEqual('Bootcamp');
+	expect(result[0].stream).toEqual('CDC');
 })
