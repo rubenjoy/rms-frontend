@@ -1,28 +1,23 @@
-function addDependant(dependant) {
-	return {
-		type: 'ADD_DEPENDANT',
+export const ADD_DEPENDANT = 'ADD_DEPENDANT';
+export const CLEAN_DEPENDANTS = 'CLEAN_DEPENDANTS';
+export const DELETE_DEPENDANT = 'DELETE_DEPENDANT';
+export const UPDATE_DEPENDANT = 'UPDATE_DEPENDANT';
+
+export const addDependant = (dependant) => ({
+		type: ADD_DEPENDANT,
 		...dependant
-	};
-}
+})
 
-export {addDependant};
-
-const cleanDependants = () => ({
-	type: 'CLEAN_DEPENDANTS'
+export const cleanDependants = () => ({
+	type: CLEAN_DEPENDANTS
 });
 
-export {cleanDependants};
-
-const removeDependant = (id) => ({
-	type: 'DELETE_DEPENDANT',
+export const removeDependant = (id) => ({
+	type: DELETE_DEPENDANT,
 	id
 });
 
-export {removeDependant};
-
-const modifyDependant = (dependant) => ({
-	type: 'UPDATE_DEPENDANT',
+export const modifyDependant = (dependant) => ({
+	type: UPDATE_DEPENDANT,
 	...dependant
 });
-
-export {modifyDependant};

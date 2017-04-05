@@ -74,6 +74,7 @@ describe('async action creator for employee', () => {
 		return store.dispatch(getEmployees(0))
 			.then(() => {
 				const actions = store.getActions();
+				expect(actions.length).toEqual(2);
 				expect(actions[0]).toEqual(expectedActions[0]);
 				expect(actions[1].type).toEqual(expectedActions[1].type);
 				expect(actions[1].employees.length).toEqual(1);

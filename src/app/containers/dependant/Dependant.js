@@ -19,7 +19,7 @@ function Dependant(dependant) {
 	this.birthDate = birthDate;
 	this.activeInd = activeInd;
 	this.employeeId = employeeId;
-	this.id = id || 'undefined';
+	this.id = id || '0';
 	this.gender = gender;
 }
 

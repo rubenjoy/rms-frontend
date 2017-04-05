@@ -8,6 +8,7 @@ import employees from './containers/employee/employees';
 import employments from './containers/employment/employments';
 import grades from './containers/grade/grades';
 import locations from './containers/location/locations'
+import fetchStatus from './async/fetchStatus'
 
 import {employees as asyncEmployees} from './async/employee/reducers';
 
@@ -21,6 +22,7 @@ import {employees as asyncEmployees} from './async/employee/reducers';
 //		5. Employements from current Employee
 //		6. Locations from current Employee
 //		7. Address from current Employee
+// 		8. fetchStatus is current status from Web Fetch
 
 const rmsApp = combineReducers({
 					employees: reduceReducers(employees, asyncEmployees),
@@ -29,7 +31,8 @@ const rmsApp = combineReducers({
 					grades,
 					employments,
 					locations,
-					addresses
+					addresses,
+					fetchStatus
 				});
 
 export default rmsApp;

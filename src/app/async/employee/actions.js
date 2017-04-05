@@ -1,6 +1,7 @@
 require('isomorphic-fetch');
 
 import {
+	createErrorCreator,
 	createFetch,
 	createGetFetch,
 	HTTP_PATCH_METHOD,
@@ -60,8 +61,14 @@ export const getEmployees = (page = 0) => (dispatch)  => {
 		page,
 		size: PAGE_SIZE
 	}
-	return createGetFetch(URL, receiveEmployees,
-		GET_EMPLOYEES_FAIL, dispatch, params);
+	const onSuccess = (json) => {
+		dispatch(receiveEmployees(json));
+	}
+	const onError = (error) => {
+		dispatch(createErrorCreator(GET_EMPLOYEES_FAIL)(error));
+		// throw new Error(error);
+	}
+	return createGetFetch(URL, onSuccess, onError, params);
 }
 
 /**
@@ -70,8 +77,13 @@ export const getEmployees = (page = 0) => (dispatch)  => {
  **/
 export const postEmployee = (employee) => (dispatch) => {
 	dispatch(requestCreate());
-	return createFetch(URL, HTTP_POST_METHOD, receiveCreate,
-		POST_EMPLOYEE_FAIL, dispatch, employee);
+	const onSuccess = (json) => {
+		dispatch(receiveCreate(json));
+	}
+	const onError = (error) => {
+		dispatch(createErrorCreator(POST_EMPLOYEE_FAIL)(error));
+	}
+	return createFetch(URL, HTTP_POST_METHOD, onSuccess, onError, employee);
 }
 
 /**
@@ -81,6 +93,11 @@ export const patchEmployee = (employee) => (dispatch) => {
 	dispatch(requestUpdate());
 	const url = employee.id;
 	employee.id = 0;
-	return createFetch(url, HTTP_PATCH_METHOD, receiveUpdate,
-		PATCH_EMPLOYEE_FAIL, dispatch, employee);
+	const onSuccess = (json) => {
+		dispatch(receiveUpdate(json));
+	}
+	const onError = (error) => {
+		dispatch(createErrorCreator(PATCH_EMPLOYEE_FAIL)(error));
+	}
+	return createFetch(url, HTTP_PATCH_METHOD, onSuccess, onError, employee);
 }

@@ -2,8 +2,9 @@ require('isomorphic-fetch');
 
 import {
 	createDeleteFetch,
+	createErrorCreator,
 	createFetch,
-	HTTP_GET_METHOD,
+	createGetFetch,
 	HTTP_PATCH_METHOD,
 	HTTP_POST_METHOD
 } from './../commons';
@@ -68,8 +69,13 @@ const NESTED_URL = '/addresses';
 export const getAddresses = (employeeId) => (dispatch) => {
 	dispatch(requestAddresses());
 	const url = employeeId + NESTED_URL;
-	return createFetch(url, HTTP_GET_METHOD, receiveAddresses,
-		GET_ADDRESSES_FAIL, dispatch);
+	const onSuccess = json =>{
+		dispatch(receiveAddresses(json));
+	}
+	const onError = error => {
+		dispatch(createErrorCreator(GET_ADDRESSES_FAIL)(error));
+	}
+	return createGetFetch(url, onSuccess, onError, {});
 }
 
 /**
@@ -79,8 +85,13 @@ export const getAddresses = (employeeId) => (dispatch) => {
 export const postAddress = (employeeId, address) => (dispatch) => {
 	dispatch(requestCreate());
 	const url = employeeId + NESTED_URL;
-	return createFetch(url, HTTP_POST_METHOD, receiveCreate,
-		POST_ADDRESS_FAIL, dispatch, address);
+	const onSuccess = json => {
+		dispatch(receiveCreate(json));
+	}
+	const onError = error => {
+		dispatch(createErrorCreator(POST_ADDRESS_FAIL)(error));
+	}
+	return createFetch(url, HTTP_POST_METHOD, onSuccess, onError, address);
 }
 
 /**
@@ -90,8 +101,13 @@ export const patchAddress = (address) => (dispatch) => {
 	dispatch(requestUpdate());
 	const url = address.id;
 	address.id = 0;
-	return createFetch(url, HTTP_PATCH_METHOD,receiveUpdate, 
-		PATCH_ADDRESS_FAIL, dispatch, address);
+	const onSuccess = json => {
+		dispatch(receiveUpdate(json));
+	}
+	const onError = error => {
+		dispatch(createErrorCreator(PATCH_ADDRESS_FAIL)(error));
+	}
+	return createFetch(url, HTTP_PATCH_METHOD, onSuccess, onError, address);
 }
 
 /**
@@ -99,9 +115,11 @@ export const patchAddress = (address) => (dispatch) => {
  **/
 export const deleteAddress = (addressId) => (dispatch) => {
 	dispatch(requestDelete());
-	const wrappedFn = () => {
+	const onSuccess = () => {
 		dispatch(receiveDelete(addressId));
 	}
-	return createDeleteFetch(addressId, wrappedFn,
-		DELETE_ADDRESS_FAIL, dispatch);
+	const onError = error => {
+		dispatch(createErrorCreator(DELETE_ADDRESS_FAIL)(error));
+	}
+	return createDeleteFetch(addressId, onSuccess, onError);
 }

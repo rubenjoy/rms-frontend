@@ -1,10 +1,12 @@
 import {
+	createErrorCreator,
+	createDeleteFetch,
 	createFetch,
 	createGetFetch,
-	HTTP_DELETE_METHOD,
 	HTTP_PATCH_METHOD,
 	HTTP_POST_METHOD
 } from '../commons';
+import {depTypeMapToGender} from '../../utils/optionsConfig';
 
 export const GET_DEPENDANTS = 'GET_DEPENDANTS';
 export const GET_DEPENDANTS_SUCCESS = 'GET_DEPENDANTS_SUCCESS';
@@ -18,7 +20,7 @@ export const PATCH_DEPENDANT = 'PATCH_DEPENDANT';
 export const PATCH_DEPENDANT_SUCCESS = 'PATCH_DEPENDANT_SUCCESS';
 export const PATCH_DEPENDANT_FAIL = 'PATCH_DEPENDANT_FAIL';
 
-export const DELETE_DEPENDANT = 'DELETE_DEPENDANT';
+export const DELETE_DEPENDANT_ASYNC = 'DELETE_DEPENDANT_ASYNC';
 export const DELETE_DEPENDANT_SUCCESS = 'DELETE_DEPENDANT_SUCCESS';
 export const DELETE_DEPENDANT_FAIL = 'DELETE_DEPENDANT_FAIL';
 
@@ -39,7 +41,7 @@ const requestCreate = () => ({
 
 const receiveCreate = (dependant) => ({
 	type: POST_DEPENDANT_SUCCESS,
-	dependant
+	...dependant
 })
 
 const requestUpdate = () => ({
@@ -48,15 +50,16 @@ const requestUpdate = () => ({
 
 const receiveUpdate = (dependant) => ({
 	type: PATCH_DEPENDANT_SUCCESS,
-	dependant
+	...dependant
 })
 
 const requestDelete = () => ({
-	type: DELETE_DEPENDANT
+	type: DELETE_DEPENDANT_ASYNC
 })
 
-const receiveDelete = () => ({
-	type: DELETE_DEPENDANT_SUCCESS
+const receiveDelete = (id) => ({
+	type: DELETE_DEPENDANT_SUCCESS,
+	id
 })
 
 /**
@@ -65,8 +68,25 @@ const receiveDelete = () => ({
 export const getDependants = (employeeId) => (dispatch) => {
 	dispatch(requestDependants());
 	const url = employeeId + NESTED_URL;
-	return createGetFetch(url, receiveDependants,
-		GET_DEPENDANTS_FAIL, dispatch);
+	const onSuccess = (json) => {
+		dispatch(receiveDependants(json));
+	}
+	const onError = (error) => {
+		dispatch(createErrorCreator(GET_DEPENDANTS_FAIL)(error));
+	}
+	return createGetFetch(url, onSuccess, onError, {});
+}
+
+const addGender = (json) => {
+	const gender = depTypeMapToGender[json.relation];
+	return {...json, gender}
+}
+
+const fix = (json, employeeId) => {
+	if (json.id.match(/^\d+$/)) {
+		json.id = employeeId + NESTED_URL + '/' + json.id;
+	}
+	return addGender(json);
 }
 
 /**
@@ -76,8 +96,13 @@ export const getDependants = (employeeId) => (dispatch) => {
 export const postDependant = (employeeId, dependant) => (dispatch) => {
 	dispatch(requestCreate());
 	const url = employeeId + NESTED_URL;
-	return createFetch(url, HTTP_POST_METHOD, receiveCreate,
-		POST_DEPENDANT_FAIL, dispatch, dependant); 
+	const onSuccess = json =>  {
+		dispatch(receiveCreate(fix(json, employeeId)));
+	}
+	const onError = error => {
+		dispatch(createErrorCreator(POST_DEPENDANT_FAIL)(error));
+	}
+	return createFetch(url, HTTP_POST_METHOD, onSuccess, onError, dependant);
 }
 
 /** 
@@ -86,9 +111,15 @@ export const postDependant = (employeeId, dependant) => (dispatch) => {
 export const patchDependant = (dependant) => (dispatch) => {
 	dispatch(requestUpdate());
 	const url = dependant.id;
+	const employeeId = dependant.id.replace(/\/dependents\/\d+$/, '');
 	dependant.id = 0;
-	return createFetch(url, HTTP_PATCH_METHOD, receiveUpdate,
-		PATCH_DEPENDANT_FAIL, dispatch, dependant);
+	const onSuccess = (json) => {
+		dispatch(receiveUpdate(fix(json,employeeId)));
+	}
+	const onError = (error) => {
+		dispatch(createErrorCreator(PATCH_DEPENDANT_FAIL)(error));
+	}
+	return createFetch(url, HTTP_PATCH_METHOD, onSuccess, onError, dependant);
 }
 
 /**
@@ -96,6 +127,11 @@ export const patchDependant = (dependant) => (dispatch) => {
  **/
 export const deleteDependant = (dependantId) => (dispatch) => {
 	dispatch(requestDelete());
-	return createFetch(dependantId, HTTP_DELETE_METHOD, receiveDelete,
-		DELETE_DEPENDANT_FAIL, dispatch);
+	const onSuccess = () => {
+		dispatch(receiveDelete(dependantId));
+	}
+	const onError = (error) => {
+		dispatch(createErrorCreator(DELETE_DEPENDANT_FAIL)(error));
+	}
+	return createDeleteFetch(dependantId, onSuccess, onError);
 }

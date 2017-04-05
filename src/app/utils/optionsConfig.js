@@ -14,6 +14,7 @@ export const genderOptions = [
 ];
 
 export const lookupGender = createLookup(genderOptions);
+const genderArray = createArray(genderOptions);
 
 export const maritalStatusOptions = [
 	{id: 0, text: 'Single'},
@@ -81,6 +82,13 @@ export const depTypeOptions = [
 	{id: 2, text: 'Daugther'},
 	{id: 3, text: 'Son'}
 ];
+
+export const depTypeMapToGender = {
+	'HUSBAND': genderArray[0],
+	'WIFE': genderArray[1],
+	'DAUGHTER': genderArray[1],
+	'SON': genderArray[0]
+}
 
 export const locationOptions = [
 	{id: 0, text: 'Bali Office'},

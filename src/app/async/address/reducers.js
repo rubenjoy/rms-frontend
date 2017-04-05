@@ -17,16 +17,13 @@ export const addresses = (state = [], action) => {
 		case POST_ADDRESS:
 		case PATCH_ADDRESS:
 		case DELETE_ADDRESS_ASYNC:
-			// TODO UI spinner
-			return state;
+			return state; // fetchStatus store
 		case GET_ADDRESSES_FAIL:
 		case POST_ADDRESS_FAIL:
 		case PATCH_ADDRESS_FAIL:
 		case DELETE_ADDRESS_FAIL:
-			// TODO display error message
-			return state;
+			return state; // fetchStatus store
 		case GET_ADDRESSES_SUCCESS: {
-			// TODO update Addresses store
 			let existingIds = state
 				.filter(address => address.id !== undefined)
 				.map(address => address.id);

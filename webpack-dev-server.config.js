@@ -59,7 +59,11 @@ const config = {
 			},
 			{
 				test: /\.css$/,
-				loader: "style-loader!css-loader!sass-loader",
+				loader: "style-loader!css-loader",
+			},
+			{
+				test: /\.svg$/,
+				loader: 'base64-inline-loader',
 			},
 		],
 	}

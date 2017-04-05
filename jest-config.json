@@ -1,0 +1,9 @@
+{
+	"collectCoverage": true,
+	"collectCoverageFrom": [
+		"src/**/*.js", "!src/**/*.test.js"
+	],
+	"coveragePathIgnorePatterns": [
+		"/node_modules/", "/build/"
+	]
+}
