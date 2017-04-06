@@ -12,6 +12,10 @@ export const GET_EMPLOYEES = 'GET_EMPLOYEES';
 export const GET_EMPLOYEES_SUCCESS = 'GET_EMPLOYEES_SUCCESS';
 export const GET_EMPLOYEES_FAIL = 'GET_EMPLOYEES_FAIL';
 
+export const GET_EMPLOYEE = 'GET_EMPLOYEE';
+export const GET_EMPLOYEE_SUCCESS = 'GET_EMPLOYEE_SUCCESS';
+export const GET_EMPLOYEE_FAIL = 'GET_EMPLOYEE_FAIL';
+
 export const POST_EMPLOYEE = 'POST_EMPLOYEE';
 export const POST_EMPLOYEE_SUCCESS = 'POST_EMPLOYEE_SUCCESS';
 export const POST_EMPLOYEE_FAIL = 'POST_EMPLOYEE_FAIL';
@@ -21,6 +25,15 @@ export const PATCH_EMPLOYEE_SUCCESS = 'PATCH_EMPLOYEE_SUCCESS';
 export const PATCH_EMPLOYEE_FAIL = 'PATCH_EMPLOYEE_FAIL';
 
 const PAGE_SIZE = 20;
+
+const requestEmployee = () => ({
+	type: GET_EMPLOYEE
+})
+
+const receiveEmployee = (employee) => ({
+	type: GET_EMPLOYEE_SUCCESS,
+	...employee
+})
 
 const requestEmployees = () => ({
 	type: GET_EMPLOYEES
@@ -66,14 +79,13 @@ export const getEmployees = (page = 0) => (dispatch)  => {
 	}
 	const onError = (error) => {
 		dispatch(createErrorCreator(GET_EMPLOYEES_FAIL)(error));
-		// throw new Error(error);
 	}
 	return createGetFetch(URL, onSuccess, onError, params);
 }
 
 /**
  *  async action creator to post employee
- *  @param employee object to be posted
+ *  @param employee object to be POSTed
  **/
 export const postEmployee = (employee) => (dispatch) => {
 	dispatch(requestCreate());
@@ -88,6 +100,7 @@ export const postEmployee = (employee) => (dispatch) => {
 
 /**
  *  async action creator to patch employee
+ *  @param employee object to be PATCHed
  **/
 export const patchEmployee = (employee) => (dispatch) => {
 	dispatch(requestUpdate());
@@ -100,4 +113,18 @@ export const patchEmployee = (employee) => (dispatch) => {
 		dispatch(createErrorCreator(PATCH_EMPLOYEE_FAIL)(error));
 	}
 	return createFetch(url, HTTP_PATCH_METHOD, onSuccess, onError, employee);
+}
+
+/**
+ *  @param employeeId url id
+ **/
+export const getEmployee = (employeeId) => (dispatch) => {
+	dispatch(requestEmployee());
+	const onSuccess = (json) => {
+		dispatch(receiveEmployee(json))
+	}
+	const onError = (error) => {
+		dispatch(createErrorCreator(GET_EMPLOYEE_FAIL)(error))
+	}
+	return createGetFetch(employeeId, onSuccess, onError, {});
 }

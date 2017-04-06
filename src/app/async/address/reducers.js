@@ -3,13 +3,17 @@ import {
 	GET_ADDRESSES_SUCCESS,
 	GET_ADDRESSES_FAIL,
 	POST_ADDRESS,
+	POST_ADDRESS_SUCCESS,
 	POST_ADDRESS_FAIL,
 	PATCH_ADDRESS,
+	PATCH_ADDRESS_SUCCESS,
 	PATCH_ADDRESS_FAIL,
 	DELETE_ADDRESS_ASYNC,
+	DELETE_ADDRESS_SUCCESS,
 	DELETE_ADDRESS_FAIL
 } from './actions';
 import Address from '../../containers/address/Address';
+import {createStatusReducer} from '../fetchStatus';
 
 export const addresses = (state = [], action) => {
 	switch (action.type) {
@@ -42,3 +46,11 @@ export const addresses = (state = [], action) => {
 			return state;
 	}
 }
+
+export const fetchStatus = createStatusReducer(
+	[GET_ADDRESSES, POST_ADDRESS, PATCH_ADDRESS, DELETE_ADDRESS_ASYNC],
+	[GET_ADDRESSES_SUCCESS, POST_ADDRESS_SUCCESS, PATCH_ADDRESS_SUCCESS,
+		DELETE_ADDRESS_SUCCESS],
+	[GET_ADDRESSES_FAIL, POST_ADDRESS_FAIL, PATCH_ADDRESS_FAIL,
+		DELETE_ADDRESS_FAIL]
+);

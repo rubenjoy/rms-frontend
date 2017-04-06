@@ -59,14 +59,19 @@ describe('async action creator for address', () => {
 			address: 'Jalan'
 		};
 		const response = Object.assign({}, request, {
-			id: '/employees/50/addresses/50'
+			id: '50'
 		})
 		nock('http://localhost:8080')
 			.post('/rms/api/employees/50/addresses', request)
 			.reply(201, response);
 		const expectedActions = [
 			{type: POST_ADDRESS},
-			{type: POST_ADDRESS_SUCCESS, ...response}
+			{
+				type: POST_ADDRESS_SUCCESS,
+				activeInd: false,
+				address: 'Jalan',
+				id: '/employees/50/addresses/50'
+			}
 		]
 		const store = mockStore(rmsApp);
 
@@ -84,15 +89,17 @@ describe('async action creator for address', () => {
 			id: 0
 		}
 		const response = Object.assign({}, request, {
-			id: '/employees/50/addresses/50'
+			id: '50'
 		})
-		const address = response;
+		const address = Object.assign({}, request, {
+			id: '/employees/50/addresses/50'
+		});
 		nock('http://localhost:8080')
 			.patch('/rms/api/employees/50/addresses/50', request)
 			.reply(200, response);
 		const expectedActions = [
 			{type: PATCH_ADDRESS},
-			{type: PATCH_ADDRESS_SUCCESS, ...response}
+			{type: PATCH_ADDRESS_SUCCESS, ...address}
 		]
 		const store = mockStore(rmsApp);
 

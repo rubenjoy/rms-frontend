@@ -2,8 +2,10 @@ require('isomorphic-fetch');
 
 import {
 	createDeleteFetch,
+	createErrorCreator,
 	createFetch,
-	HTTP_GET_METHOD,
+	createGetFetch,
+	fixUrlId,
 	HTTP_PATCH_METHOD,
 	HTTP_POST_METHOD
 } from './../commons';
@@ -20,7 +22,7 @@ export const PATCH_LOCATION = 'PATCH_LOCATION';
 export const PATCH_LOCATION_SUCCESS = 'PATCH_LOCATION_SUCCESS';
 export const PATCH_LOCATION_FAIL = 'PATCH_LOCATION_FAIL';
 
-export const DELETE_LOCATION = 'DELETE_LOCATION';
+export const DELETE_LOCATION_ASYNC = 'DELETE_LOCATION_ASYNC';
 export const DELETE_LOCATION_SUCCESS = 'DELETE_LOCATION_SUCCESS';
 export const DELETE_LOCATION_FAIL = 'DELETE_LOCATION_FAIL';
 
@@ -40,8 +42,8 @@ const requestCreate = () => ({
 })
 
 const receiveCreate = (location) => ({
-	tyoe: POST_LOCATION_SUCCESS,
-	location
+	type: POST_LOCATION_SUCCESS,
+	...location
 })
 
 const requestUpdate = () => ({
@@ -50,15 +52,15 @@ const requestUpdate = () => ({
 
 const receiveUpdate = (location) => ({
 	type: PATCH_LOCATION_SUCCESS,
-	location
+	...location
 })
 
 const requestDelete = () => ({
-	type: DELETE_LOCATION
+	type: DELETE_LOCATION_ASYNC
 })
 
-const receiveDelete = () => ({
-	type: DELETE_LOCATION_SUCCESS
+const receiveDelete = (id) => ({
+	type: DELETE_LOCATION_SUCCESS, id
 })
 
 /**
@@ -67,8 +69,9 @@ const receiveDelete = () => ({
 export const getLocations = (employeeId) => (dispatch) => {
 	dispatch(requestLocations());
 	const url = employeeId + NESTED_URL;
-	return createFetch(url, HTTP_GET_METHOD, receiveLocations,
-		GET_LOCATIONS_FAIL, dispatch);
+	const onSuccess = json => dispatch(receiveLocations(json));
+	const onError = error => dispatch(createErrorCreator(GET_LOCATIONS_FAIL)(error));
+	return createGetFetch(url, onSuccess, onError, {});
 }
 
 /**
@@ -78,8 +81,14 @@ export const getLocations = (employeeId) => (dispatch) => {
 export const postLocation = (employeeId, location) => (dispatch) => {
 	dispatch(requestCreate());
 	const url = employeeId + NESTED_URL;
-	return createFetch(url, HTTP_POST_METHOD, receiveCreate,
-		POST_LOCATION_FAIL, dispatch, location);
+	const onSuccess = json => {
+		dispatch(receiveCreate(fixUrlId(json,employeeId,NESTED_URL)));
+	}
+	const onError = error => {
+		dispatch(createErrorCreator(POST_LOCATION_FAIL)(error));
+	}
+
+	return createFetch(url, HTTP_POST_METHOD, onSuccess, onError, location);
 }
 
 /**
@@ -88,9 +97,15 @@ export const postLocation = (employeeId, location) => (dispatch) => {
 export const patchLocation = (location) => (dispatch) => {
 	dispatch(requestUpdate());
 	const url = location.id;
-	location.id = 1;
-	return createFetch(url, HTTP_PATCH_METHOD, receiveUpdate,
-		PATCH_LOCATION_FAIL, dispatch, location);
+	const employeeId = location.id.replace(/\/locations\/\d+/,'');
+	location.id = 0;
+	const onSuccess = json => {
+		dispatch(receiveUpdate(fixUrlId(json,employeeId,NESTED_URL)));
+	}
+	const onError = error => {
+		dispatch(createErrorCreator(PATCH_LOCATION_FAIL)(error))
+	}
+	return createFetch(url, HTTP_PATCH_METHOD, onSuccess, onError, location);
 }
 
 /**
@@ -98,6 +113,11 @@ export const patchLocation = (location) => (dispatch) => {
  **/
 export const deleteLocation = (locationId) => (dispatch) => {
 	dispatch(requestDelete());
-	return createDeleteFetch(locationId, receiveDelete,
-		DELETE_LOCATION_FAIL, dispatch);
+	const onSuccess = () => {
+		dispatch(receiveDelete(locationId));
+	}
+	const onError = error => {
+		dispatch(createErrorCreator(DELETE_LOCATION_FAIL)(error));
+	}
+	return createDeleteFetch(locationId, onSuccess, onError);
 }

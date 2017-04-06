@@ -3,7 +3,12 @@ import thunk from 'redux-thunk';
 import nock from 'nock';
 
 import {
+	GET_EMPLOYEE,
+	GET_EMPLOYEE_FAIL,
+	GET_EMPLOYEE_SUCCESS,
+	getEmployee,
 	GET_EMPLOYEES,
+	GET_EMPLOYEES_FAIL,
 	GET_EMPLOYEES_SUCCESS,
 	getEmployees,
 	PATCH_EMPLOYEE,
@@ -13,9 +18,6 @@ import {
 	POST_EMPLOYEE_SUCCESS,
 	postEmployee
 } from './actions';
-import {
-	FETCH_FAIL
-} from '../commons';
 import rmsApp from '../../rmsApp';
 import Employee from '../../containers/employee/Employee';
 
@@ -32,8 +34,8 @@ describe('async action creator for employee', () => {
 		const expectedActions = [
 			{type: GET_EMPLOYEES},
 			{
-				type: FETCH_FAIL, 
-				errStatus: -1 
+				type: GET_EMPLOYEES_FAIL,
+				errStatus: 'ECONNREFUSED',
 			}
 		];
 		const store = mockStore(rmsApp);
@@ -47,7 +49,61 @@ describe('async action creator for employee', () => {
 					.toEqual(expectedActions[1].type);
 				expect(actions[1].errStatus).
 					toEqual(expectedActions[1].errStatus);
+				expect(actions[1].errText).toBeDefined();
 			});
+	})
+
+	test('when item not found, it should return fail action', () => {
+		nock('http://localhost:8080')
+			.get('/rms/api/employees/50')
+			.reply(404);
+		const expected = [
+			{type: GET_EMPLOYEE},
+			{
+				type: GET_EMPLOYEE_FAIL,
+				errStatus: 404,
+				errText: 'Not Found'
+			}
+		]
+		const store = mockStore(rmsApp);
+
+		return store.dispatch(getEmployee('/employees/50'))
+			.then(() => {
+				const actions = store.getActions();
+				expect(actions).toEqual(expected);
+			})
+	})
+
+	test('it should return action with specific employee', () => {
+		const response = {
+			id: '/employees/50',
+			name: 'Peter Parker',
+			gender: 'Male',
+		}
+		nock('http://localhost:8080')
+			.get('/rms/api/employees/50')
+			.reply(200, response);
+		const expected = [
+			{type: GET_EMPLOYEE},
+			{
+				type: GET_EMPLOYEE_SUCCESS,
+				id: '/employees/50',
+				name: 'Peter Parker',
+				gender: 'Male'
+			}
+		]
+		const store = mockStore(rmsApp);
+
+		return store.dispatch(getEmployee('/employees/50'))
+			.then(() => {
+				const actions = store.getActions();
+				expect(actions.length).toEqual(2);
+				expect(actions[0]).toEqual(expected[0]);
+				expect(actions[1].type).toEqual(expected[1].type);
+				expect(actions[1].id).toEqual(expected[1].id);
+				expect(actions[1].name).toEqual(expected[1].name);
+				expect(actions[1].gender).toEqual(expected[1].gender);
+			})
 	})
 
 	test('it should return action with employees', () => {

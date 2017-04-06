@@ -5,6 +5,9 @@ import {
 	FETCH_FAIL
 } from './commons';
 import fetchStatus from './fetchStatus';
+import {
+	createStatusReducer
+} from './fetchStatus';
 
 describe('commons fetchStatus reducer', () => {
 
@@ -35,6 +38,52 @@ describe('commons fetchStatus reducer', () => {
 		}
 		const result = fetchStatus(undefined, action);
 
+		expect(result).toEqual(expected);
+	})
+})
+
+describe('create fetch status reducer', () => {
+
+	const reducer = createStatusReducer(['start'],['success'],['fail']);
+
+	test('dispatch action type in success', () => {
+		const action = {
+			type: 'success'
+		}
+		const expected = {
+			isFetching: false,
+			errorMessage: '',
+			errorHttpCode: 200
+		}
+		const result = reducer(undefined, action);
+		expect(result).toEqual(expected);
+	})
+
+	test('dispatch action type in start', () => {
+		const action = {
+			type: 'start'
+		}
+		const expected = {
+			isFetching: true,
+			errorMessage: '',
+			errorHttpCode: 200
+		}
+		const result = reducer(undefined, action);
+		expect(result).toEqual(expected);
+	})
+
+	test('dispatch action type in fail', () => {
+		const action = {
+			type: 'fail',
+			errStatus: 409,
+			errText: 'fail fetching'
+		}
+		const expected = {
+			isFetching: false,
+			errorMessage: 'fail fetching',
+			errorHttpCode: 409
+		}
+		const result = reducer(undefined, action);
 		expect(result).toEqual(expected);
 	})
 })

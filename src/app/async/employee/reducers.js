@@ -1,27 +1,39 @@
 import {
+	GET_EMPLOYEE,
+	GET_EMPLOYEE_SUCCESS,
+	GET_EMPLOYEE_FAIL,
 	GET_EMPLOYEES,
 	GET_EMPLOYEES_SUCCESS,
 	GET_EMPLOYEES_FAIL,
-	POST_EMPLOYEE,
-	POST_EMPLOYEE_FAIL,
 	PATCH_EMPLOYEE,
-	PATCH_EMPLOYEE_FAIL
+	PATCH_EMPLOYEE_SUCCESS,
+	PATCH_EMPLOYEE_FAIL,
+	POST_EMPLOYEE,
+	POST_EMPLOYEE_SUCCESS,
+	POST_EMPLOYEE_FAIL
 } from './actions';
+import {
+	createStatusReducer
+} from '../fetchStatus';
 
 import Employee from '../../containers/employee/Employee';
 
 export const employees = (state = [], action) => {
 	switch (action.type) {
-		case GET_EMPLOYEES:
-		case POST_EMPLOYEE:
-		case PATCH_EMPLOYEE: 
-			// TODO display spinner UI
-			return state;
-		case GET_EMPLOYEES_FAIL:
-		case POST_EMPLOYEE_FAIL:
-		case PATCH_EMPLOYEE_FAIL: 
-			// TODO display error message
-			return state;
+		case GET_EMPLOYEE: {
+			const index = state.indexOf(action.id);
+			if (index < 0) { // not exists
+				return [...state, new Employee(action)];
+			}// exists
+			return state.map((employee, i) => {
+				if (index !== i) {
+					return employee;
+				}
+				return new Employee({
+					...employee, ...action
+				});
+			})
+		}
 		case GET_EMPLOYEES_SUCCESS: {
 			let existingIds = state
 				.filter(employee => employee.id !== undefined)
@@ -39,3 +51,11 @@ export const employees = (state = [], action) => {
 			return state;
 	}
 }
+
+export const fetchStatus = createStatusReducer(
+	[GET_EMPLOYEE, GET_EMPLOYEES, POST_EMPLOYEE, PATCH_EMPLOYEE],
+	[GET_EMPLOYEE_SUCCESS, GET_EMPLOYEES_SUCCESS, POST_EMPLOYEE_SUCCESS,
+		PATCH_EMPLOYEE_SUCCESS],
+	[GET_EMPLOYEE_FAIL, GET_EMPLOYEES_FAIL, POST_EMPLOYEE_FAIL,
+		PATCH_EMPLOYEE_FAIL]
+);

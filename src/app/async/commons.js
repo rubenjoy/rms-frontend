@@ -1,5 +1,6 @@
 import fetch from 'isomorphic-fetch';
-import {Promise} from 'es6-promise';
+import Promise from 'es6-promise';
+Promise.polyfill();
 
 const URL_ADDR = 'http://localhost:8080/rms/api';
 
@@ -33,10 +34,24 @@ const catchFail = (type, errStatus, errText = "") => ({
 	type, errStatus, errText
 });
 
+/**
+ *  @param json to be fixed
+ *	@param employeeId url id
+ *  @param parentUrl for this jsonified weak entity
+ **/
+export const fixUrlId = (json, employeeId, parentUrl) => {
+	if (json.id.match(/^\d+$/)) {
+		json.id = employeeId + parentUrl + '/' + json.id
+	}
+	return json;
+}
+
 export const createErrorCreator = (actionType) => (error) => {
-	if (error.message instanceof FetchError) {
-		return catchFail(actionType, error.message.httpCode,
-			error.message.message);
+	if (typeof error.name === 'number') {
+		return catchFail(actionType, error.name, error.message);
+	}
+	if (error.name === 'FetchError') {
+		return catchFail(actionType, error.code, error.message);
 	}
 	return catchFail(actionType, -1, error.message.toString());
 }
@@ -60,10 +75,6 @@ const buildOptions = (httpMethod, payload, header = {}) => {
 	return result;
 }
 
-function FetchError(httpCode, message) {
-	return {httpCode, message};
-}
-
 /**
  *  @param url address
  *  @param options for fetch
@@ -77,11 +88,8 @@ const _createFetch = (url, options, resolve, reject) => {
 				if (response.ok) {
 					return resolve(response);
 				}
-				const err = new Error(
-					new FetchError(
-						response.status, response.statusText
-					)
-				);
+				let err = new Error(response.statusText);
+				err.name = response.status;
 				return reject(err);
 			},
 			error => {
@@ -97,14 +105,8 @@ const _createJson = (response) => {
 const _dumpError = (error) => {
 	console.error(error);
 }
-
-/**
- *  @param duration to delay in milliseconds
- **/
-export function timeout(duration) {
-	return new Promise((resolve) => {
-		setTimeout(resolve, duration);
-	});
+const _throwAgain = (error) => {
+	throw error;
 }
 
 /**
@@ -115,7 +117,7 @@ export function timeout(duration) {
  **/
 export function createGetFetch(url, resolve, reject, params = {}) {
 	const options = buildOptions(HTTP_GET_METHOD, {});
-	return _createFetch(buildUrl(url, params), options, _createJson, reject)
+	return _createFetch(buildUrl(url, params), options, _createJson, _throwAgain)
 		.then(resolve,reject)
 		.catch(_dumpError);
 }
@@ -130,7 +132,7 @@ export function createGetFetch(url, resolve, reject, params = {}) {
  **/
 export function createFetch(url, httpMethod, resolve, reject, payload = {}) {
 	const options = buildOptions(httpMethod, payload);
-	return _createFetch(buildUrl(url, {}), options, _createJson, reject)
+	return _createFetch(buildUrl(url, {}), options, _createJson, _throwAgain)
 		.then(resolve, reject)
 		.catch(_dumpError);
 }

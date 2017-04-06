@@ -3,6 +3,7 @@ import {
 	createDeleteFetch,
 	createFetch,
 	createGetFetch,
+	fixUrlId,
 	HTTP_PATCH_METHOD,
 	HTTP_POST_METHOD
 } from '../commons';
@@ -83,10 +84,7 @@ const addGender = (json) => {
 }
 
 const fix = (json, employeeId) => {
-	if (json.id.match(/^\d+$/)) {
-		json.id = employeeId + NESTED_URL + '/' + json.id;
-	}
-	return addGender(json);
+	return addGender(fixUrlId(json,employeeId, NESTED_URL));
 }
 
 /**

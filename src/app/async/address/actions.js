@@ -5,9 +5,12 @@ import {
 	createErrorCreator,
 	createFetch,
 	createGetFetch,
+	fixUrlId,
 	HTTP_PATCH_METHOD,
 	HTTP_POST_METHOD
 } from './../commons';
+import Promise from 'es6-promise';
+Promise.polyfill();
 
 export const GET_ADDRESSES = 'GET_ADDRESSES';
 export const GET_ADDRESSES_SUCCESS = 'GET_ADDRESSES_SUCCESS';
@@ -86,7 +89,9 @@ export const postAddress = (employeeId, address) => (dispatch) => {
 	dispatch(requestCreate());
 	const url = employeeId + NESTED_URL;
 	const onSuccess = json => {
-		dispatch(receiveCreate(json));
+		dispatch(receiveCreate(
+			fixUrlId(json, employeeId, NESTED_URL)
+		));
 	}
 	const onError = error => {
 		dispatch(createErrorCreator(POST_ADDRESS_FAIL)(error));
@@ -100,9 +105,12 @@ export const postAddress = (employeeId, address) => (dispatch) => {
 export const patchAddress = (address) => (dispatch) => {
 	dispatch(requestUpdate());
 	const url = address.id;
+	const employeeId = url.replace(/\/addresses\/\d+/,'');
 	address.id = 0;
 	const onSuccess = json => {
-		dispatch(receiveUpdate(json));
+		dispatch(receiveUpdate(
+			fixUrlId(json, employeeId, NESTED_URL)
+		));
 	}
 	const onError = error => {
 		dispatch(createErrorCreator(PATCH_ADDRESS_FAIL)(error));

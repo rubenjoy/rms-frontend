@@ -14,7 +14,7 @@ import {
 	POST_EMPLOYEE_SUCCESS
 } from './employee/actions';
 
-const defaultState = {
+export const defaultState = {
 	isFetching: false,
 	errorMessage: '',
 	errorHttpCode: 200
@@ -52,3 +52,30 @@ function fetchStatus(state = defaultState, action) {
 }
 
 export default fetchStatus;
+
+/**
+ *  @param starts action type which start fetch operation
+ *  @param successes action type after fetch done
+ *  @param fails action type after fetch done with errors
+ **/
+export const createStatusReducer = (starts, successes, fails) =>
+(state = defaultState, action) => {
+	if (starts.indexOf(action.type) !== -1) {
+		return Object.assign({}, state, {
+			isFetching: true,
+			errorMessage: defaultState.errorMessage,
+			errorHttpCode: defaultState.errorHttpCode
+		});
+	}
+	if (successes.indexOf(action.type) !== -1) {
+		return Object.assign({}, state, {isFetching: false})
+	}
+	if (fails.indexOf(action.type) !== -1) {
+		return Object.assign({}, state, {
+			isFetching: false,
+			errorMessage: action.errText,
+			errorHttpCode: action.errStatus > 0 ? action.errStatus : 404
+		})
+	}
+	return state;
+}

@@ -38,14 +38,24 @@ const Spinner = () => (
 
 const Error = (props) => (
 	<div className="Main-error">
-		<h2>ERR:{props.message}</h2>
+		<h2>Err HTTP Code: {props.httpCode}</h2>
 		Sorry, RMS don't keep its promise,,
+		<p>
+			message from REST: {props.message}
+		</p>
 	</div>
 )
 
-const Main = (props) => {
-	if (props.isFetching) {
+const Main = ({fetchStatus}) => {
+	if (fetchStatus.isFetching) {
 		return <Spinner />
+	}
+	if (fetchStatus.isFetching === false &&
+		fetchStatus.errorMessage !== '') {
+		const {errorHttpCode, errorMessage} = fetchStatus;
+		return <Error httpCode={errorHttpCode}
+					message={errorMessage}
+				/>
 	}
 	return (
 		<MuiThemeProvider muiTheme={rmsMuiTheme}>
