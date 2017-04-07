@@ -6,7 +6,6 @@ const emptyData = {
 	activeInd: false
 };
 
-// TODO active Indicator?
 function Location(location) {
 	const {id, branchOffice,
 		startDate, endDate,
@@ -17,7 +16,7 @@ function Location(location) {
 	this.startDate = startDate;
 	this.endDate = endDate;
 	this.employeeId = employeeId;
-	this.id = id || 'undefined';
+	this.id = id || '0';
 	this.activeInd = activeInd;
 }
 

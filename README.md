@@ -13,6 +13,7 @@ TODO:
  into employees object or <em>associative map</em> with ID as key
  and employee as value.</del> CANCELLED
  7. isolate the style into css file
+ 8. remove employeeId from address, location, grade, employement, and dependant.
 
 CHANGELOG
 
